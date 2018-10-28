@@ -9,7 +9,7 @@ fi
 
 # If we have a VPN connection ignore the underlying IP address(es)
 if [ "$2" = "up" ]; then
-  cp /etc/hosts.bak /etc/hosts
+  cp /etc/hosts.default /etc/hosts
 
   wifi=`nmcli -t -f active,ssid dev wifi | egrep '^yes' | cut -d: -f2`
   host_conf=`cat "/etc/hosts.d/hosts.${wifi}" 2> /dev/null`
