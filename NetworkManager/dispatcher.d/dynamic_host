@@ -1,0 +1,21 @@
+#!/bin/sh -e
+# Script to dispatch NetworkManager events
+#
+
+if [ -z "$1" ]; then
+    echo "$0: called with no interface" 1>&2
+    exit 1;
+fi
+
+# If we have a VPN connection ignore the underlying IP address(es)
+if [ "$2" = "up" ]; then
+  cp /etc/hosts.bak /etc/hosts
+
+  wifi=`nmcli -t -f active,ssid dev wifi | egrep '^yes' | cut -d: -f2`
+  host_conf=`cat "/etc/hosts.d/hosts.${wifi}" 2> /dev/null`
+  if [ -n "$host_conf" ]; then
+  	#Use special host file
+	echo "[DYNAMIC_HOST] Loading /etc/hosts.d/hosts.${wifi}"
+  	echo "${host_conf}" >> /etc/hosts
+  fi
+fi
